@@ -17,8 +17,8 @@ class CreatePharmaciesTable extends Migration
             $table->id();
             $table->string("name", 255);
             $table->text("address");
-            $table->float("lat");
-            $table->float("lon");
+            $table->decimal("lat",18,16);
+            $table->decimal("lon",18,16);
             $table->string("phone", 15);
             $table->timestamps();
         });

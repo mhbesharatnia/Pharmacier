@@ -15,7 +15,7 @@ class PharmacyController extends Controller
         //find in ~100KM square (in Iran)
         $pharmacy = Pharmacy::where('lat', '>', $lat - 0.5)
             ->where('lat', '<', $lat + 0.5)
-            ->where('lon', '>', $lon + 0.5)
+            ->where('lon', '>', $lon - 0.5)
             ->where('lon', '<', $lon + 0.5)->get();
         //TODO: sort by distance and limit to 10 selection;
         if ($pharmacy) {
