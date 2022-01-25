@@ -20,18 +20,22 @@ class PharmacyController extends Controller
         if ($pharmacies) {
             $count = count($pharmacies);
             if ($count > 10) {
-                foreach ($pharmacies as $pharmacy) {
-                    $pharmacy->dist = PharmacyController::distanceCalc($pharmacy->lat, $pharmacy->lon, $lat, $lon);
-                }
-                $nearestPharmacies = $pharmacies->sortBy('dist', -1);
                 $list = [];
-                for ($i = $count-1; $i >= $count-10; $i--) {
-                    $list[] = $nearestPharmacies[$i];
+                foreach ($pharmacies as $pharmacy) {
+                    $list[] = ['dist' => PharmacyController::distanceCalc($pharmacy->lat, $pharmacy->lon, $lat, $lon), "pharmacy" =>$pharmacy];
+                }
+                usort($list, function ($a, $b) {
+                    
+                    return $b["dist"] - $a["dist"] > 0 ? -1 : 1;
+                });
+                $return = [];
+                for ($i = 0; $i < 10; $i++) {
+                    $return[] = $list[$i]["pharmacy"];
                 }
             } else {
-                $list = $pharmacies;
+                $return = $pharmacies;
             }
-            return response(["status" => true, "list" => $list], 200);
+            return response(["status" => true, "list" => $return], 200);
         }
         return response(["status" => false, "errorNumber" => 404, "errorMessage" => "not found"], 404);
     }
@@ -40,6 +44,11 @@ class PharmacyController extends Controller
     {
         $a = $p1lat - $p2lat;
         $b = $p1lon - $p2lon;
-        return ($a * $a) + ($b * $b);
+        return (float) ($a * $a) + ($b * $b);
     }
+}
+
+function cmp($a, $b)
+{
+    return $a > $b ? true : false;
 }
